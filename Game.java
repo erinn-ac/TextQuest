@@ -6,7 +6,7 @@ public class Game
 {  
   
 
-    public static void main(String args[]) {
+    public static void runGame() {
 
         Room[][] roomLocations = initialiseRooms(); //This runs the intialiseRooms() method to generate a 2D array of Room objects. 
         
