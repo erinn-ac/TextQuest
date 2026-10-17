@@ -6,7 +6,7 @@ public class Game
 {  
   
 
-    public static void runGame() {
+    public static void main() {
 
         Room[][] roomLocations = initialiseRooms(); //This runs the intialiseRooms() method to generate a 2D array of Room objects. 
         
