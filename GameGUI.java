@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -33,19 +34,14 @@ public class GameGUI {
     JButton enterButton;
     EnterButtonAction ebHandler = new EnterButtonAction(this);
 
-    boolean gameOnGoing = true;
-    final String[][] ALL_ITEMS = new String[][] {{"key", "A rusty old metal key."}, {"oar", "An old wooden oar."}, {"gold", "A pouch full of bright, shining gold."}, {"sword", "A shining silver sword, covered in jewels. It hums with power."}, {"tooth", "A dragon's tooth, it is bright, shining white and very sharp."}, {"ring", "A magic ring, it is bright glittering gold and you can feel it humming with power."}, {"cat", "You have found a rare cave cat! They are magic animals and very loyal."}, {"mushroom", "A small red mushroom covered in white dots."}}; //This 2D array contains a list of all items in the game and their descriptions (this is referenced when the user 'looks' at an item in their inventory) 
-        
+    
+    final String[][] ALL_ITEMS = new String[][] {{"key", "A rusty old metal key."}, {"oar", "An old wooden oar."}, {"gold", "A pouch full of bright, shining gold."}, {"sword", "A shining silver sword, covered in jewels. It hums with power."}, {"tooth", "A dragon's tooth, it is bright, shining white and very sharp."}, {"ring", "A magic ring, it is bright glittering gold and you can feel it humming with power."}, {"cat", "You have found a rare cave cat! They are magic animals and very loyal."}, {"mushroom", "A small red mushroom covered in white dots."}}; //This 2D array contains a list of all items in the game and their descriptions (this is referenced when the user 'looks' at an item in their inventory)    
     Room[][] roomLocations = initialiseRooms();
     final String HELP_TEXT = "\nAll commands:\nmove (north/east/south/west) - this allows you to try to move in each respective direction.\nlook - this displays a description of the room/area you are in.\nlook (feature name) - this displays a description of a feature of a room you are in\nlook (item name) - this displays a description of an item in your inventory\ntake (item name) - this allows you to pick up an item from a room\nuse (item name) - this allows you to use an item\ndrop (item name) - this allows you to remove an item from your inventory and place it in a room (hint: unless there are too many items in the room)\napproach (character name) - this allows you to interact with some characters\nfight (creature name) - this allows you to fight a creature\ninventory - this allows you to view the items in your inventory (hint: you can only have a limited number)\nscore - this displays your current score\nmap - this displays the map of the world (hint: visiting more rooms unlocks more of the map)\nhelp - this displays all possible commands you can use\nquit - this ends the game and shows you your final score\n"; //This is the text displayed when a user types the help command. 
     //final String INITIAL_TEXT = "\nWelcome! You are on a quest... to find adventure! (And a magic ring...) Explore the map to find puzzles to solve and heroic deeds to complete.\nType help to learn what different commands there are.\n\nYou are standing in a forest."; //This is the text displayed automatically when the game begins. 
     final int INITIAL_SCORE = 0; 
-   
     final int MAP_SIZEX = 6; 
     final int MAP_SIZEY = 6;
-    
-    
-
     Player player = new Player(roomLocations, new Score(INITIAL_SCORE), new Inventory(), new Map(MAP_SIZEX,MAP_SIZEY)); //This creates a player object which also contains the 2D array of all the rooms objects, so they can be easily be referenced and updated along with a score, inventory and map object.
     //The player class contains methods such as move, look, user etc. which when a command has been checked to be valid, are ran to update all the relevant objects/variables accordingly. 
    
@@ -119,12 +115,17 @@ public class GameGUI {
 
         //area where text is displayed to the user
         gameplayTextArea = new JTextArea("Welcome! You are on a quest... to find adventure! (And a magic ring...) \nExplore the map to find puzzles to solve and heroic deeds to complete. \nType help to learn what different commands there are. \n \nYou are standing in a forest.");
-        gameplayTextArea.setBounds((width-gtpWidth)/2, 50, gtpWidth, gtpHeight);
+        gameplayTextArea.setBounds((width-gtpWidth)/2, 50, gtpWidth-20, gtpHeight);
         gameplayTextArea.setBackground(mainScreenColour);
         gameplayTextArea.setForeground(Color.WHITE);
-        gameplayTextArea.setFont(new Font("Monospace", Font.PLAIN, 20)); 
+        gameplayTextArea.setFont(new Font("Monospace", Font.PLAIN, 15)); 
         gameplayTextArea.setLineWrap(true);
         gameplayTextPanel.add(gameplayTextArea);
+
+        JScrollPane scroll = new JScrollPane (gameplayTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        gameplayTextPanel.add(scroll);
+        
 
         //area where the user inputs text
         textInputPanel = new JPanel(); 
@@ -134,7 +135,7 @@ public class GameGUI {
         textInputPanel.setBackground(mainScreenColour);
         container.add(textInputPanel);
 
-        textInputBox = new JTextField("<Type commands here>", 10);
+        textInputBox = new JTextField("<Type commands here>", 15);
         int tibWidth = 500;
         int tibHeight = 350;
         textInputBox.setBounds((width-tibWidth)/2, 0, tibWidth, tibHeight);
@@ -144,7 +145,7 @@ public class GameGUI {
         
         textInputPanel.setLayout(new BorderLayout());
 
-        textInputBox.setFont(new Font("Monospaced", Font.PLAIN, 20));
+        textInputBox.setFont(new Font("Monospaced", Font.PLAIN, 15));
         textInputBox.setPreferredSize(new Dimension(500, 50));
         textInputPanel.add(textInputBox, BorderLayout.NORTH);
 
@@ -304,7 +305,7 @@ public class GameGUI {
                             break;
                         case "quit":
                             outputString =("\nGAME OVER\nFinal score: "+player.score.getScore());
-                            gameOnGoing = false; //ends the while loop by setting the gameOnGoing varible to false, thus ending the game
+                            
                             break;
                         default:
                             outputString =("Not a valid command"); //this should never be run (due to the validation) but it is there in case of an error
@@ -315,19 +316,19 @@ public class GameGUI {
                 switch(output[0])
                     {
                         case "move":
-                            player.move(output[1]);
+                            outputString = player.move(output[1]);
                             break;
                         case "look":
-                            player.look(output[1], Game.ALL_ITEMS);
+                            outputString = player.look(output[1], Game.ALL_ITEMS);
                             break;
                         case "use":
                             player.use(output[1]);
                             break;
                         case "drop":
-                            player.drop(output[1]);
+                            outputString = player.drop(output[1]);
                             break;
                         case "take":
-                            player.take(output[1]);
+                            outputString = player.take(output[1]);
                             break;
                         case "approach":
                             player.use(output[1]);
